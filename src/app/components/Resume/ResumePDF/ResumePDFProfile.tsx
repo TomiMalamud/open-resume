@@ -20,8 +20,9 @@ export const ResumePDFProfile = ({
   themeColor: string;
   isPDF: boolean;
 }) => {
-  const { name, email, phone, url, summary, location } = profile;
-  const iconProps = { email, phone, location, url };
+  const { name, email, phone, url, linkedin, summary, location } = profile;
+  const iconProps = { email, phone, location, url, linkedin };
+  const urlRegex = /^(https?:\/\/)?[a-zA-Z0-9][a-zA-Z0-9-]*\.[a-zA-Z0-9][a-zA-Z0-9-.]+[a-zA-Z0-9-]*\/?$/
 
   return (
     <ResumePDFSection style={{ marginTop: spacing["4"] }}>
@@ -44,7 +45,7 @@ export const ResumePDFProfile = ({
           if (!value) return null;
 
           let iconType = key as IconType;
-          if (key === "url") {
+          if (key === "url" || key === "linkedin") {
             if (value.includes("github")) {
               iconType = "url_github";
             } else if (value.includes("linkedin")) {
@@ -52,22 +53,36 @@ export const ResumePDFProfile = ({
             }
           }
 
-          const shouldUseLinkWrapper = ["email", "url", "phone"].includes(key);
+          const shouldUseLinkWrapper = ["email", "url", "linkedin", "phone"].includes(key);
           const Wrapper = ({ children }: { children: React.ReactNode }) => {
             if (!shouldUseLinkWrapper) return <>{children}</>;
-
+          
             let src = "";
+            const trimmedValue = value.trim(); // Remove whitespaces from both ends
+          
+            // Optional: Validate the URL if needed
+            const isValidURL = urlRegex.test(trimmedValue);
+          
             switch (key) {
               case "email": {
-                src = `mailto:${value}`;
+                src = `mailto:${trimmedValue}`;
                 break;
               }
               case "phone": {
-                src = `tel:${value.replace(/[^\d+]/g, "")}`; // Keep only + and digits
+                src = `tel:${trimmedValue.replace(/[^\d+]/g, "")}`; // Keep only + and digits
+                break;
+              }
+              case "linkedin": {
+                src = trimmedValue.startsWith("http") ? trimmedValue : `https://${trimmedValue}`;
                 break;
               }
               default: {
-                src = value.startsWith("http") ? value : `https://${value}`;
+                if (isValidURL) {
+                  src = trimmedValue.startsWith("http") ? trimmedValue : `https://${trimmedValue}`;
+                } else {
+                  <p>Error</p>
+                }
+                break;
               }
             }
 

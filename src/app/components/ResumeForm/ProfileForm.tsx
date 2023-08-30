@@ -7,11 +7,29 @@ import { ResumeProfile } from "lib/redux/types";
 export const ProfileForm = () => {
   const profile = useAppSelector(selectProfile);
   const dispatch = useAppDispatch();
-  const { name, email, phone, url, summary, location } = profile;
+  const { name, email, phone, url, linkedin, summary, location } = profile;
+  const urlRegex = /^(https?:\/\/)?[a-zA-Z0-9][a-zA-Z0-9-]*\.[a-zA-Z0-9][a-zA-Z0-9-.]+[a-zA-Z0-9-]*\/?$/;
 
   const handleProfileChange = (field: keyof ResumeProfile, value: string) => {
-    dispatch(changeProfile({ field, value }));
+    let isValid = true;
+  
+    // Validate the URL if the field is 'url' or 'linkedin'
+    if (field === "url" || field === "linkedin") {
+      isValid = urlRegex.test(value.trim());
+  
+      if (!isValid) {
+        // Provide a UI indication to inform the user of invalid input
+        // For example: setValidationError("Invalid URL");
+        return;
+      }
+    }
+  
+    // If valid, dispatch the change
+    if (isValid) {
+      dispatch(changeProfile({ field, value: value.trim() }));
+    }
   };
+  
 
   return (
     <BaseForm>
@@ -52,7 +70,7 @@ export const ProfileForm = () => {
           label="Website"
           labelClassName="col-span-4"
           name="url"
-          placeholder="linkedin.com/in/khanacademy"
+          placeholder="github.com/khanacademy"
           value={url}
           onChange={handleProfileChange}
         />
@@ -62,6 +80,14 @@ export const ProfileForm = () => {
           name="location"
           placeholder="NYC, NY"
           value={location}
+          onChange={handleProfileChange}
+        />
+        <Input
+          label="LinkedIn" // New input field
+          labelClassName="col-span-4"
+          name="linkedin" // New field
+          placeholder="linkedin.com/in/khanacademy"
+          value={linkedin} // New field
           onChange={handleProfileChange}
         />
       </div>

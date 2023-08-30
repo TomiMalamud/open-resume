@@ -24,7 +24,7 @@ export const ResumePDFSection = ({
     }}
   >
     {heading && (
-      <View style={{ ...styles.flexRow, alignItems: "center" }}>
+      <View style={{ ...styles.flexRow, alignItems: "center", marginTop:spacing[0] }}>
         {themeColor && (
           <View
             style={{
@@ -123,7 +123,7 @@ export const ResumePDFLink = ({
 }) => {
   if (isPDF) {
     return (
-      <Link src={src} style={{ textDecoration: "none" }}>
+      <Link src={src} style={{ textDecoration: "none", lineHeight: spacing[6] }}>
         {children}
       </Link>
     );
@@ -131,7 +131,7 @@ export const ResumePDFLink = ({
   return (
     <a
       href={src}
-      style={{ textDecoration: "none" }}
+      style={{ textDecoration: "none", lineHeight: spacing[6]}}
       target="_blank"
       rel="noreferrer"
     >
